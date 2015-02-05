@@ -1,0 +1,102 @@
+"Name"    = 'dqueen' 
+"Version" = '2015'
+"Author"  = 'Igor S. Kurilov' 
+"About"   = 'Next generation database language'
+
+"Case Sensitive" = True
+"Start Symbol"   = <Statements>
+
+! ===================================================================
+! Literals
+! ===================================================================
+{Hex Digit}      = {Digit} + [abcdefABCDEF]
+
+{Id Head}        = {Letter} + [_]
+{Id Tail}        = {Id Head} + {Digit}
+
+{String Ch}      = {Printable} - ["]
+{Char Ch}        = {Printable} - ['']
+
+DecLiteral       = [123456789]{digit}*
+HexLiteral       = 0x{Hex Digit}+
+FloatLiteral     = {Digit}*'.'{Digit}+
+
+StringLiteral    = '"'( {String Ch} | '\'{Printable} )* '"'
+CharLiteral      = '' ( {Char Ch} | '\'{Printable} )''
+
+ID               = {Id Head}{Id Tail}*
+
+<Constant>         ::= DecLiteral
+                     | StringLiteral
+                     | FloatLiteral
+                     | HexLiteral
+                     | CharLiteral
+                     
+<NumConstant>   ::= DecLiteral
+                 
+! ===================================================================
+! Comments
+! ===================================================================
+Comment Start = '/*'
+Comment End   = '*/'
+Comment Line  = '//'
+
+! ===================================================================
+! Statements
+! ===================================================================
+<Variable> ::= id
+            
+
+<Statements> ::= <Statement>
+              | <Statement> <Statements>
+              
+<Statement> ::= <DeclTable>
+             
+<DeclTable> ::= table ID '{' <DeclFields> '}'
+             
+<DeclFields> ::= <DeclField>
+              | <DeclField> ',' <DeclFields>
+              
+<DeclField> ::= <TypeDef> ID
+             | <TypeDef> ID '=' <Expression>
+
+<TypeDef> ::= <Type>
+           | <Type> '?'
+             
+<Type>   ::= int | bigint | smallint | tinyint | int64 | int32 | int16 | int8 
+           | date | datetime | bool | money | uid | <StringDef> | <DecimalDef> 
+           
+<StringDef> ::= string '[' <NumConstant> ']'
+             | string
+             
+<DecimalDef> ::= decimal '[' <NumConstant> ',' <NumConstant> ']'
+              | decimal '[' <NumConstant> ']'
+              | decimal
+              
+<Expression> ::= <SimpleExpression>
+               | <SimpleExpression> '=' <SimpleExpression>
+               | <SimpleExpression> '<>' <SimpleExpression>
+               | <SimpleExpression> '<' <SimpleExpression>
+               | <SimpleExpression> '<=' <SimpleExpression>
+               | <SimpleExpression> '>' <SimpleExpression>
+               | <SimpleExpression> '>=' <SimpleExpression>
+
+<SimpleExpression> ::= <Term>
+                    | <SimpleExpression> '+' <Term>
+                    | <SimpleExpression> '-' <Term>
+                    | <SimpleExpression> '|' <Term>
+                    
+<Term> ::= <Factor>
+         | <Term> '*' <Factor>
+         | <Term> '/' <Factor>
+         | <Term> '\' <Factor>
+         | <Term> '%' <Factor>
+         | <Term> '&' <Factor>
+         
+<Factor> ::= '(' <Expression> ')'
+           | '+' <Factor>
+           | '-' <Factor>
+           | '!' <Factor>
+           | <Constant>
+           | <Variable>
+           

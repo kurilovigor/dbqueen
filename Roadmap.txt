@@ -1,0 +1,10 @@
+=== ROADMAP ===
+0.1		Language specification
+0.1.1	Basic language structure: module management, type, data, code and service operators
+0.1.1.1		Type, defaults, checks
+0.2		Program execution enviroment
+
+
+Migration to from Sql Server utility
+Parallel execution & Clouding
+Inter-system/asyncronios communications / messaging / replication
